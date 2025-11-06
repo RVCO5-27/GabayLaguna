@@ -47,8 +47,11 @@ const features = [
 ];
 
 const Features = () => (
-  <section className="py-5" id="features" style={{
-    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'
+  <section className="py-4" id="features" style={{
+    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+    paddingBottom: '6rem', // extra space above footer
+    marginBottom: '0',
+    boxShadow: 'inset 0 -12px 24px rgba(0,0,0,0.08)'
   }}>
     <div className="container">
       {/* Header */}
@@ -96,7 +99,7 @@ const Features = () => (
                 </div>
 
                 {/* Content */}
-                <h5 className="card-title fw-bold mb-3" style={{ color: '#2c3e50' }}>
+                <h5 className="card-title fw-bold mb-3" style={{ color: 'var(--feature-title-color, #3B82F6)' }}>
                   {feature.title}
                 </h5>
                 <p className="card-text text-muted lh-base">

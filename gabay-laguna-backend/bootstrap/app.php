@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'guide' => \App\Http\Middleware\GuideMiddleware::class,
             'tourist' => \App\Http\Middleware\TouristMiddleware::class,
+            'cache.api' => \App\Http\Middleware\CacheApiResponse::class,
         ]);
         
         // Enable CORS for API routes

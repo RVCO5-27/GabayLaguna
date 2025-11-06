@@ -105,31 +105,29 @@ const Login = () => {
     <div
       className="min-vh-100 d-flex align-items-center"
       style={{
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        background: "linear-gradient(135deg, #1e293b 0%, #334155 100%)",
         padding: "2rem 0",
       }}
     >
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-lg-5 col-md-7">
-            {/* Logo and Header */}
-            <div className="text-center mb-5">
-              <img
-                src="/assets/logo.png"
-                alt="Gabay Laguna Logo"
-                className="mb-4"
-                style={{
-                  width: "90px",
-                  height: "auto",
-                  filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.2))",
-                }}
-              />
-              <h1 className="text-white fw-bold mb-3">Welcome Back</h1>
-              <p className="text-white-50 lead mb-0">Sign in to your account</p>
+            {/* Header */}
+            <div className="text-center mb-4">
+              <h1 className="text-white fw-bold mb-2" style={{ fontSize: "2.5rem" }}>Welcome Back</h1>
+              <p className="text-white-50" style={{ fontSize: "1.1rem" }}>Sign in to your account</p>
             </div>
 
             {/* Login Form Card */}
-            <div className="card">
+            <div 
+              className="card"
+              style={{
+                background: "#374151",
+                border: "none",
+                borderRadius: "16px",
+                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)",
+              }}
+            >
               <div className="card-body p-5">
                 {serverError && (
                   <div
@@ -146,39 +144,46 @@ const Login = () => {
                   <div className="mb-4">
                     <label
                       htmlFor="email"
-                      className="form-label fw-semibold text-muted"
+                      className="form-label fw-semibold text-white d-flex align-items-center"
+                      style={{ fontSize: "0.9rem" }}
                     >
-                      <FaEnvelope className="me-2" />
+                      <FaEnvelope className="me-2" style={{ color: "#9ca3af" }} />
                       Email Address
                     </label>
-                    <div className="input-group">
-                      <input
-                        type="email"
-                        className={`form-control form-control-lg ${
-                          errors.email ? "is-invalid" : ""
-                        }`}
-                        id="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        placeholder="Enter your email"
-                        required
-                      />
-                      {errors.email && (
-                        <div className="invalid-feedback">{errors.email}</div>
-                      )}
-                    </div>
+                    <input
+                      type="email"
+                      className={`form-control form-control-lg ${
+                        errors.email ? "is-invalid" : ""
+                      }`}
+                      id="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      placeholder="tour@gmail.com"
+                      required
+                      style={{
+                        background: "#4b5563",
+                        border: "1px solid #6b7280",
+                        borderRadius: "8px",
+                        color: "white",
+                        padding: "12px 16px",
+                      }}
+                    />
+                    {errors.email && (
+                      <div className="invalid-feedback">{errors.email}</div>
+                    )}
                   </div>
 
                   {/* Password Field */}
                   <div className="mb-4">
                     <label
                       htmlFor="password"
-                      className="form-label fw-semibold text-muted"
+                      className="form-label fw-semibold text-white d-flex align-items-center"
+                      style={{ fontSize: "0.9rem" }}
                     >
-                      <FaLock className="me-2" />
+                      <FaLock className="me-2" style={{ color: "#9ca3af" }} />
                       Password
                     </label>
-                    <div className="input-group">
+                    <div className="position-relative">
                       <input
                         type={showPassword ? "text" : "password"}
                         className={`form-control form-control-lg ${
@@ -189,12 +194,27 @@ const Login = () => {
                         onChange={handleChange}
                         placeholder="Enter your password"
                         required
+                        style={{
+                          background: "#4b5563",
+                          border: "1px solid #6b7280",
+                          borderRadius: "8px",
+                          color: "white",
+                          padding: "12px 50px 12px 16px",
+                        }}
                       />
                       <button
                         type="button"
-                        className="btn btn-outline-secondary"
+                        className="btn btn-link position-absolute"
                         onClick={() => setShowPassword(!showPassword)}
-                        style={{ borderLeft: "none" }}
+                        style={{
+                          right: "8px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          color: "#9ca3af",
+                          border: "none",
+                          background: "none",
+                          padding: "4px",
+                        }}
                       >
                         {showPassword ? <FaEyeSlash /> : <FaEye />}
                       </button>
@@ -211,8 +231,25 @@ const Login = () => {
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    className="btn btn-primary btn-lg w-100 mb-4"
+                    className="btn btn-lg w-100 mb-4 d-flex align-items-center justify-content-center"
                     disabled={isLoading}
+                    style={{
+                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      border: "none",
+                      borderRadius: "8px",
+                      color: "white",
+                      fontWeight: "600",
+                      padding: "12px 24px",
+                      transition: "all 0.3s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = "translateY(-1px)";
+                      e.target.style.boxShadow = "0 4px 15px rgba(102, 126, 234, 0.4)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow = "none";
+                    }}
                   >
                     {isLoading ? (
                       <>
@@ -233,27 +270,67 @@ const Login = () => {
 
                   {/* Navigation Links */}
                   <div className="text-center">
-                    <p className="text-muted mb-3">
+                    <p className="text-white-50 mb-3" style={{ fontSize: "0.9rem" }}>
                       Don't have an account? Choose your path:
                     </p>
                     <div className="d-grid gap-2 mb-3">
                       <Link
                         to="/signup/tourist"
-                        className="btn btn-outline-success btn-sm"
+                        className="btn btn-sm d-flex align-items-center justify-content-center"
+                        style={{
+                          background: "transparent",
+                          border: "1px solid #3b82f6",
+                          borderRadius: "8px",
+                          color: "#3b82f6",
+                          fontWeight: "500",
+                          padding: "8px 16px",
+                          transition: "all 0.3s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = "#3b82f6";
+                          e.target.style.color = "white";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = "transparent";
+                          e.target.style.color = "#3b82f6";
+                        }}
                       >
-                        🧳 Sign Up as Tourist
+                        <span className="me-2">🧳</span>
+                        Sign Up as Tourist
                       </Link>
                       <Link
                         to="/signup/guide"
-                        className="btn btn-outline-info btn-sm"
+                        className="btn btn-sm d-flex align-items-center justify-content-center"
+                        style={{
+                          background: "transparent",
+                          border: "1px solid #f59e0b",
+                          borderRadius: "8px",
+                          color: "#f59e0b",
+                          fontWeight: "500",
+                          padding: "8px 16px",
+                          transition: "all 0.3s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = "#f59e0b";
+                          e.target.style.color = "white";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = "transparent";
+                          e.target.style.color = "#f59e0b";
+                        }}
                       >
-                        🧭 Sign Up as Guide
+                        <span className="me-2">🧭</span>
+                        Sign Up as Guide
                       </Link>
                     </div>
                     <Link
                       to="/"
-                      className="btn btn-link text-decoration-none"
-                      style={{ color: "#667eea" }}
+                      className="btn btn-link text-decoration-none text-white"
+                      style={{ 
+                        color: "white",
+                        fontSize: "0.9rem",
+                        fontWeight: "500",
+                      }}
                     >
                       ← Back to Home
                     </Link>
@@ -264,7 +341,7 @@ const Login = () => {
 
             {/* Footer Note */}
             <div className="text-center mt-4">
-              <p className="text-white-50 small mb-0">
+              <p className="text-white-50 small mb-0" style={{ fontSize: "0.8rem" }}>
                 Secure login powered by Gabay Laguna
               </p>
             </div>

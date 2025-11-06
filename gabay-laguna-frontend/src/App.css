@@ -13,4 +13,5 @@ body {
 
 main {
   flex: 1;
+  padding-bottom: 3rem; /* ensure breathing room above footer across pages */
 }

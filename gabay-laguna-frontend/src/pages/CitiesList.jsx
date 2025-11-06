@@ -310,18 +310,31 @@ const CitiesList = () => {
   };
 
   return (
-    <section className="py-5 bg-light min-vh-100" data-bs-theme="light">
+    <section 
+      className="py-5 min-vh-100" 
+      style={{ 
+        background: "var(--color-bg)",
+        color: "var(--color-text)"
+      }}
+    >
       <div className="container">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <button className="btn btn-outline-secondary" onClick={handleBack}>
+          <button 
+            className="btn btn-outline-secondary" 
+            onClick={handleBack}
+            style={{ 
+              color: "var(--color-text)",
+              borderColor: "var(--color-border)"
+            }}
+          >
             ← Back
           </button>
           <nav aria-label="breadcrumb">
             <ol className="breadcrumb mb-0">
               <li className="breadcrumb-item">
-                <a href="/">Home</a>
+                <a href="/" style={{ color: "var(--color-accent)" }}>Home</a>
               </li>
-              <li className="breadcrumb-item active" aria-current="page">
+              <li className="breadcrumb-item active" aria-current="page" style={{ color: "var(--color-text-muted)" }}>
                 Laguna Cities
               </li>
             </ol>
@@ -342,6 +355,13 @@ const CitiesList = () => {
             className="form-control w-75 mx-auto shadow-sm"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              background: "var(--input-bg, var(--color-bg-secondary))",
+              border: "1px solid var(--color-border)",
+              color: "var(--input-text, var(--color-text))",
+              borderRadius: "8px",
+              padding: "12px 16px"
+            }}
           />
         </div>
 
@@ -351,12 +371,21 @@ const CitiesList = () => {
               .fill()
               .map((_, i) => (
                 <div key={i} className="col-sm-12 col-md-6 col-lg-4">
-                  <div className="card h-100 placeholder-glow shadow-sm">
+                  <div 
+                    className="card h-100 placeholder-glow shadow-sm"
+                    style={{ 
+                      background: "var(--card-bg, var(--color-bg))",
+                      border: "1px solid var(--card-border, var(--color-border))"
+                    }}
+                  >
                     <div
                       className="card-img-top placeholder"
-                      style={{ height: "220px" }}
+                      style={{ 
+                        height: "220px",
+                        background: "var(--color-bg-secondary)"
+                      }}
                     ></div>
-                    <div className="card-body">
+                    <div className="card-body" style={{ background: "var(--card-bg, var(--color-bg))" }}>
                       <h5 className="card-title placeholder col-6"></h5>
                       <p className="card-text placeholder col-8"></p>
                       <div className="mb-2">
@@ -377,7 +406,11 @@ const CitiesList = () => {
                     className="card h-100 shadow-sm border-0 transition"
                     role="button"
                     onClick={() => handleCityClick(city)}
-                    style={{ cursor: "pointer" }}
+                    style={{ 
+                      cursor: "pointer",
+                      background: "var(--card-bg, var(--color-bg))",
+                      border: "1px solid var(--card-border, var(--color-border))"
+                    }}
                   >
                     <img
                       src={getImageUrl(city.name, 'city', city.image)}
@@ -387,11 +420,17 @@ const CitiesList = () => {
                       style={{ height: "200px", objectFit: "cover" }}
                       onError={(e) => handleImageError(e, 'city')}
                     />
-                    <div className="card-body d-flex flex-column">
-                      <h5 className="card-title fw-semibold text-success">
+                    <div className="card-body d-flex flex-column" style={{ background: "var(--card-bg, var(--color-bg))" }}>
+                      <h5 
+                        className="card-title fw-semibold"
+                        style={{ color: "var(--color-success)" }}
+                      >
                         {city.name}
                       </h5>
-                      <p className="card-text text-muted small flex-grow-1">
+                      <p 
+                        className="card-text small flex-grow-1"
+                        style={{ color: "var(--color-text-secondary)" }}
+                      >
                         {city.description ||
                           "Explore beautiful destinations and attractions"}
                       </p>
@@ -399,17 +438,23 @@ const CitiesList = () => {
                       {/* POIs Section */}
                       {cityPois.length > 0 && (
                         <div className="mb-3">
-                          <h6 className="text-muted mb-2">
+                          <h6 
+                            className="mb-2"
+                            style={{ color: "var(--color-text-muted)" }}
+                          >
                             🏛️ Popular Attractions:
                           </h6>
                           <div className="d-flex flex-wrap gap-2">
                             {cityPois.map((poi) => (
                               <div key={poi.id} className="d-flex flex-column align-items-start">
                                 <span
-                                  className="badge bg-light text-dark border"
+                                  className="badge"
                                   style={{
                                     cursor: "pointer",
                                     fontSize: "0.8rem",
+                                    background: "var(--color-bg-secondary)",
+                                    color: "var(--color-text)",
+                                    border: "1px solid var(--color-border)"
                                   }}
                                   onClick={(e) => handlePoiClick(poi, e)}
                                   title={poi.description}
@@ -417,16 +462,22 @@ const CitiesList = () => {
                                   {poi.name}
                                 </span>
                                 {poi.category && (
-                                  <span className={`badge ${
-                                    (poi.category.name || poi.category) === 'Historical' ? 'bg-warning text-dark' :
-                                    (poi.category.name || poi.category) === 'Natural' ? 'bg-success' :
-                                    (poi.category.name || poi.category) === 'Waterfalls/Adventure' ? 'bg-primary' :
-                                    (poi.category.name || poi.category) === 'Theme Parks' ? 'bg-info text-dark' :
-                                    (poi.category.name || poi.category) === 'Educational' ? 'bg-secondary' :
-                                    (poi.category.name || poi.category) === 'Wellness' ? 'bg-light text-dark' :
-                                    (poi.category.name || poi.category) === 'Cultural' ? 'bg-dark' :
-                                    'bg-secondary'
-                                  }`} style={{ fontSize: "0.7rem", marginTop: "2px" }}>
+                                  <span 
+                                    className="badge"
+                                    style={{ 
+                                      fontSize: "0.7rem", 
+                                      marginTop: "2px",
+                                      background: (poi.category.name || poi.category) === 'Historical' ? '#f59e0b' :
+                                      (poi.category.name || poi.category) === 'Natural' ? '#10b981' :
+                                      (poi.category.name || poi.category) === 'Waterfalls/Adventure' ? '#3b82f6' :
+                                      (poi.category.name || poi.category) === 'Theme Parks' ? '#06b6d4' :
+                                      (poi.category.name || poi.category) === 'Educational' ? '#6b7280' :
+                                      (poi.category.name || poi.category) === 'Wellness' ? '#8b5cf6' :
+                                      (poi.category.name || poi.category) === 'Cultural' ? '#ef4444' :
+                                      '#6b7280',
+                                      color: 'white'
+                                    }}
+                                  >
                                     {poi.category.name || poi.category}
                                   </span>
                                 )}
@@ -436,7 +487,13 @@ const CitiesList = () => {
                         </div>
                       )}
 
-                      <button className="btn btn-outline-success mt-auto align-self-start">
+                      <button 
+                        className="btn btn-outline-success mt-auto align-self-start"
+                        style={{
+                          color: "var(--color-success)",
+                          borderColor: "var(--color-success)"
+                        }}
+                      >
                         Discover {city.name}
                       </button>
                     </div>
@@ -445,7 +502,7 @@ const CitiesList = () => {
               );
             })
           ) : (
-            <div className="col-12 text-center text-muted">
+            <div className="col-12 text-center" style={{ color: "var(--color-text-muted)" }}>
               <p>
                 No cities found matching "<strong>{searchTerm}</strong>"
               </p>

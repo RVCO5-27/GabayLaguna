@@ -461,12 +461,29 @@ const POIs = () => {
   }
 
   return (
-    <div className="container py-5">
-      <button className="btn btn-outline-secondary mb-4" onClick={handleBack}>
+    <div 
+      className="container py-5"
+      style={{ 
+        background: "var(--color-bg)",
+        color: "var(--color-text)",
+        minHeight: "100vh"
+      }}
+    >
+      <button 
+        className="btn btn-outline-secondary mb-4" 
+        onClick={handleBack}
+        style={{ 
+          color: "var(--color-text)",
+          borderColor: "var(--color-border)"
+        }}
+      >
         ← Back to Cities
       </button>
 
-      <h2 className="mb-4">
+      <h2 
+        className="mb-4"
+        style={{ color: "var(--color-text)" }}
+      >
         Points of Interest in {city.name || `City ${cityId}`}
       </h2>
 
@@ -474,7 +491,12 @@ const POIs = () => {
       {availableCategories.length > 0 && (
         <div className="mb-4">
           <div className="d-flex flex-wrap gap-2 align-items-center">
-            <span className="fw-bold text-muted me-3">Filter by Category:</span>
+            <span 
+              className="fw-bold me-3"
+              style={{ color: "var(--color-text-muted)" }}
+            >
+              Filter by Category:
+            </span>
             <button
               className={`btn btn-sm ${selectedCategory === "" ? "btn-success" : "btn-outline-success"}`}
               onClick={() => handleCategoryChange("")}
@@ -498,9 +520,16 @@ const POIs = () => {
 
       {filteredPois.length === 0 ? (
         <div className="text-center py-5">
-          <div className="alert alert-info">
-            <h5>No points of interest found</h5>
-            <p>
+          <div 
+            className="alert alert-info"
+            style={{
+              background: "var(--color-bg-secondary)",
+              border: "1px solid var(--color-border)",
+              color: "var(--color-text)"
+            }}
+          >
+            <h5 style={{ color: "var(--color-text)" }}>No points of interest found</h5>
+            <p style={{ color: "var(--color-text-secondary)" }}>
               {selectedCategory 
                 ? `No ${selectedCategory} attractions found in this city.` 
                 : "There are no points of interest available for this city yet."
@@ -510,6 +539,10 @@ const POIs = () => {
               <button 
                 className="btn btn-outline-primary btn-sm"
                 onClick={() => handleCategoryChange("")}
+                style={{
+                  color: "var(--color-primary)",
+                  borderColor: "var(--color-primary)"
+                }}
               >
                 Show All Categories
               </button>
@@ -520,7 +553,13 @@ const POIs = () => {
         <div className="row">
           {filteredPois.map((poi) => (
             <div key={poi.id} className="col-md-6 col-lg-4 mb-4">
-              <div className="card h-100 shadow-sm">
+              <div 
+                className="card h-100 shadow-sm"
+                style={{
+                  background: "var(--card-bg, var(--color-bg))",
+                  border: "1px solid var(--card-border, var(--color-border))"
+                }}
+              >
                 <img
                   src={getImageUrl(poi.name, 'poi', poi.image || poi.images?.[0])}
                   className="card-img-top"
@@ -528,22 +567,34 @@ const POIs = () => {
                   style={{ height: "200px", objectFit: "cover" }}
                   onError={(e) => handleImageError(e, 'poi')}
                 />
-                <div className="card-body d-flex flex-column">
-                  <h5 className="card-title">{poi.name}</h5>
+                <div 
+                  className="card-body d-flex flex-column"
+                  style={{ background: "var(--card-bg, var(--color-bg))" }}
+                >
+                  <h5 
+                    className="card-title"
+                    style={{ color: "var(--color-text)" }}
+                  >
+                    {poi.name}
+                  </h5>
                   
                   {/* Category Badge */}
                   {poi.category && (
                     <div className="mb-2">
-                      <span className={`badge ${
-                        (poi.category.name || poi.category) === 'Historical' ? 'bg-warning text-dark' :
-                        (poi.category.name || poi.category) === 'Natural' ? 'bg-success' :
-                        (poi.category.name || poi.category) === 'Waterfalls/Adventure' ? 'bg-primary' :
-                        (poi.category.name || poi.category) === 'Theme Parks' ? 'bg-info text-dark' :
-                        (poi.category.name || poi.category) === 'Educational' ? 'bg-secondary' :
-                        (poi.category.name || poi.category) === 'Wellness' ? 'bg-light text-dark' :
-                        (poi.category.name || poi.category) === 'Cultural' ? 'bg-dark' :
-                        'bg-secondary'
-                      }`}>
+                      <span 
+                        className="badge"
+                        style={{
+                          background: (poi.category.name || poi.category) === 'Historical' ? '#f59e0b' :
+                          (poi.category.name || poi.category) === 'Natural' ? '#10b981' :
+                          (poi.category.name || poi.category) === 'Waterfalls/Adventure' ? '#3b82f6' :
+                          (poi.category.name || poi.category) === 'Theme Parks' ? '#06b6d4' :
+                          (poi.category.name || poi.category) === 'Educational' ? '#6b7280' :
+                          (poi.category.name || poi.category) === 'Wellness' ? '#8b5cf6' :
+                          (poi.category.name || poi.category) === 'Cultural' ? '#ef4444' :
+                          '#6b7280',
+                          color: 'white'
+                        }}
+                      >
                         <i className={`fas ${
                           (poi.category.name || poi.category) === 'Historical' ? 'fa-landmark' :
                           (poi.category.name || poi.category) === 'Natural' ? 'fa-leaf' :
@@ -559,20 +610,32 @@ const POIs = () => {
                     </div>
                   )}
                   
-                  <p className="card-text flex-grow-1">
+                  <p 
+                    className="card-text flex-grow-1"
+                    style={{ color: "var(--color-text-secondary)" }}
+                  >
                     {poi.description || "No description available."}
                   </p>
 
                   {/* Guide Count */}
                   <div className="mb-3">
-                    <span className="badge bg-info text-dark">
+                    <span 
+                      className="badge"
+                      style={{
+                        background: "var(--color-info)",
+                        color: "white"
+                      }}
+                    >
                       <i className="fas fa-user-check me-1"></i>
                       {guideCounts[poi.id] || 0} Guides Available
                     </span>
                   </div>
 
                   {poi.address && (
-                    <p className="text-muted small">
+                    <p 
+                      className="small"
+                      style={{ color: "var(--color-text-muted)" }}
+                    >
                       <i className="fas fa-map-marker-alt me-1"></i>
                       {poi.address}
                     </p>
@@ -580,14 +643,30 @@ const POIs = () => {
 
                   <div className="d-grid gap-2">
                     <button
-                      className="btn btn-outline-primary"
+                      className="btn btn-outline-primary position-relative"
                       onClick={() => handleViewGuides(poi)}
                       disabled={
                         !guideCounts[poi.id] || guideCounts[poi.id] === 0
                       }
+                      title={
+                        !guideCounts[poi.id] || guideCounts[poi.id] === 0
+                          ? "No guides available for this location"
+                          : `View ${guideCounts[poi.id]} available guide${guideCounts[poi.id] > 1 ? 's' : ''}`
+                      }
+                      style={{
+                        opacity: (!guideCounts[poi.id] || guideCounts[poi.id] === 0) ? 0.6 : 1,
+                        cursor: (!guideCounts[poi.id] || guideCounts[poi.id] === 0) ? 'not-allowed' : 'pointer'
+                      }}
                     >
-                      <i className="fas fa-users me-2"></i>
-                      View Guides
+                      <i className={`fas me-2 ${
+                        (!guideCounts[poi.id] || guideCounts[poi.id] === 0) 
+                          ? 'fa-user-slash' 
+                          : 'fa-users'
+                      }`}></i>
+                      {(!guideCounts[poi.id] || guideCounts[poi.id] === 0) 
+                        ? 'No Guides Available' 
+                        : 'View Guides'
+                      }
                     </button>
                   </div>
                 </div>

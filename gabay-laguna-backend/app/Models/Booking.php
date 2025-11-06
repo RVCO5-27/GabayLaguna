@@ -20,7 +20,11 @@ class Booking extends Model
         'number_of_people',
         'special_requests',
         'status',
+        'payment_status',
         'total_amount',
+        'initial_payment_amount',
+        'final_payment_amount',
+        'paid_at',
     ];
 
     protected $casts = [
@@ -28,6 +32,9 @@ class Booking extends Model
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
         'total_amount' => 'decimal:2',
+        'initial_payment_amount' => 'decimal:2',
+        'final_payment_amount' => 'decimal:2',
+        'paid_at' => 'datetime',
     ];
 
     /**
@@ -100,5 +107,37 @@ class Booking extends Model
     public function guideLocations()
     {
         return $this->hasMany(GuideLocation::class);
+    }
+
+    /**
+     * Check if payment is complete
+     */
+    public function isPaymentComplete(): bool
+    {
+        return $this->payment_status === 'fully_paid';
+    }
+
+    /**
+     * Calculate initial payment amount (30%)
+     */
+    public function calculateInitialPayment(): float
+    {
+        return round($this->total_amount * 0.30, 2);
+    }
+
+    /**
+     * Calculate final payment amount (70%)
+     */
+    public function calculateFinalPayment(): float
+    {
+        return round($this->total_amount * 0.70, 2);
+    }
+
+    /**
+     * Scope to filter by payment status
+     */
+    public function scopeByPaymentStatus($query, $status)
+    {
+        return $query->where('payment_status', $status);
     }
 }

@@ -138,23 +138,6 @@ const Hero = () => {
                   Start Exploring
                   <FaArrowRight className="ms-2" />
                 </Link>
-                <Link
-                  to="/login"
-                  className="btn btn-outline-light btn-lg px-4 py-3 fw-semibold"
-                  style={{
-                    borderRadius: "50px",
-                    borderWidth: "2px",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.background = "rgba(255,255,255,0.1)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.background = "transparent";
-                  }}
-                >
-                  Sign In
-                </Link>
               </div>
 
               {/* Additional Links */}

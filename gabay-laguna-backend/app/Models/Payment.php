@@ -13,8 +13,16 @@ class Payment extends Model
         'booking_id',
         'payment_method',
         'transaction_id',
+        'reference_number',
+        'gcash_qr_code',
+        'gcash_account_number',
         'amount',
         'status',
+        'verification_status',
+        'rejection_reason',
+        'verified_by',
+        'verified_at',
+        'payment_screenshot_path',
         'payment_details',
         'paid_at',
     ];
@@ -31,6 +39,14 @@ class Payment extends Model
     public function booking()
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    /**
+     * Get the user who verified this payment
+     */
+    public function verifier()
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 
     /**

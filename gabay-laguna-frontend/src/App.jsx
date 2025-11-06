@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Navbar from "./components/Navbar";
@@ -6,23 +6,23 @@ import Hero from "./components/Hero";
 import About from "./components/About";
 import Features from "./components/Features";
 import Footer from "./components/Footer";
-import Login from "./pages/Login";
-import SignupTourist from "./pages/SignupTourist";
-import SignupGuide from "./pages/SignupGuide";
-import AdminLogin from "./pages/AdminLogin";
-import TouristDashboard from "./pages/TouristDashboard";
-import GuideDashboard from "./pages/GuideDashboard";
-import TouristProfile from "./pages/TouristProfile";
-import TourGuideProfile from "./pages/TourGuideProfile";
-import AdminDashboard from "./pages/AdminDashboard";
-import BookingPage from "./pages/BookingPage";
-import MyBookings from "./pages/MyBookings";
-import GuideBookings from "./pages/GuideBookings";
-import POIGuides from "./pages/POIGuides";
-import CitiesList from "./pages/CitiesList";
-import POIs from "./pages/POIs";
-import CategoryList from "./pages/CategoryList";
-import POIList from "./pages/POIList";
+const Login = lazy(() => import("./pages/Login"));
+const SignupTourist = lazy(() => import("./pages/SignupTourist"));
+const SignupGuide = lazy(() => import("./pages/SignupGuide"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const TouristDashboard = lazy(() => import("./pages/TouristDashboard"));
+const GuideDashboard = lazy(() => import("./pages/GuideDashboard"));
+const TouristProfile = lazy(() => import("./pages/TouristProfile"));
+const TourGuideProfile = lazy(() => import("./pages/TourGuideProfile"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const BookingPage = lazy(() => import("./pages/BookingPage"));
+const MyBookings = lazy(() => import("./pages/MyBookings"));
+const GuideBookings = lazy(() => import("./pages/GuideBookings"));
+const POIGuides = lazy(() => import("./pages/POIGuides"));
+const CitiesList = lazy(() => import("./pages/CitiesList"));
+const POIs = lazy(() => import("./pages/POIs"));
+const CategoryList = lazy(() => import("./pages/CategoryList"));
+const POIList = lazy(() => import("./pages/POIList"));
 import ProtectedRoute from "./components/ProtectedRoute";
 import GuideLocationApplications from "./pages/GuideLocationApplications";
 import GuideDutyLocations from "./pages/GuideDutyLocations";
@@ -31,6 +31,7 @@ import AdminLocationApplications from "./pages/AdminLocationApplications";
 import AdminSpotSuggestions from "./pages/AdminSpotSuggestions";
 import AdminUserManagement from "./pages/AdminUserManagement";
 import AdminReports from "./pages/AdminReports";
+import AdminGCashVerification from "./pages/AdminGCashVerification";
 import TouristReviews from "./pages/TouristReviews";
 import GuideReviews from "./pages/GuideReviews";
 import PublicGuideProfile from "./pages/PublicGuideProfile";
@@ -61,6 +62,7 @@ const App = () => {
             )}
             <div className={isPublic || isHomePage ? "col-12" : "col-12 col-md-10"}>
               <main>
+                <Suspense fallback={<div className="text-center py-5">Loading…</div>}>
                 <Routes>
                   <Route
                     path="/"
@@ -158,7 +160,16 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+                  <Route
+                    path="/admin/gcash-verification"
+                    element={
+                      <ProtectedRoute allowedRoles={["admin"]}>
+                        <AdminGCashVerification />
+                      </ProtectedRoute>
+                    }
+                  />
                 </Routes>
+                </Suspense>
               </main>
             </div>
           </div>

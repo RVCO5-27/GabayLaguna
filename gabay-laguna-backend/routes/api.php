@@ -13,6 +13,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LocationApplicationController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\GCashPaymentController;
+use App\Http\Controllers\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,8 +59,8 @@ Route::get('/guides', [TourGuideController::class, 'index']);
 Route::get('/guides/{guide}', [TourGuideController::class, 'show']);
 Route::get('/guides/search', [TourGuideController::class, 'search']);
 Route::get('/guides/{guide}/reviews', [ReviewController::class, 'getGuideReviews']);
-Route::get('/guides/{guide}/availability', [TourGuideController::class, 'getGuideAvailability']);
-Route::get('/guides/{guide}/time-slots', [TourGuideController::class, 'getAvailableTimeSlots']);
+Route::get('/guides/{guide}/availability', [TourGuideController::class, 'getGuideAvailability'])->middleware('cache.api:300'); // Cache for 5 minutes
+Route::get('/guides/{guide}/time-slots', [TourGuideController::class, 'getAvailableTimeSlots'])->middleware('cache.api:300'); // Cache for 5 minutes
 
 // Debug endpoint to see all guides
 Route::get('/debug/guides', function () {
@@ -80,7 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Tourist routes
     Route::middleware('tourist')->group(function () {
         Route::post('/bookings', [BookingController::class, 'store']);
-        Route::get('/bookings', [BookingController::class, 'touristBookings']);
+        Route::get('/bookings', [BookingController::class, 'touristBookings'])->middleware('cache.api:120'); // Cache for 2 minutes
         Route::get('/bookings/{booking}', [BookingController::class, 'show']);
         Route::put('/bookings/{booking}', [BookingController::class, 'update']);
         Route::delete('/bookings/{booking}', [BookingController::class, 'cancel']);
@@ -93,14 +95,21 @@ Route::middleware('auth:sanctum')->group(function () {
         // Location tracking routes for tourists
         Route::get('/bookings/{booking}/guide-location', [LocationController::class, 'getGuideLocation']);
         Route::get('/bookings/{booking}/location-history', [LocationController::class, 'getLocationHistory']);
+        
+        // Chat routes
+        Route::get('/chat/conversations', [ChatController::class, 'getConversations']);
+        Route::get('/chat/messages', [ChatController::class, 'getMessages']);
+        Route::post('/chat/messages', [ChatController::class, 'sendMessage']);
+        Route::put('/chat/messages/{message}/read', [ChatController::class, 'markAsRead']);
+        Route::get('/chat/unread-count', [ChatController::class, 'getUnreadCount']);
     });
 
     // Guide routes
     Route::middleware('guide')->group(function () {
-        Route::get('/guide/bookings', [BookingController::class, 'guideBookings']);
+        Route::get('/guide/bookings', [BookingController::class, 'guideBookings'])->middleware('cache.api:120'); // Cache for 2 minutes
         Route::put('/guide/bookings/{booking}/status', [BookingController::class, 'updateStatus']);
         
-        Route::get('/guide/availability', [TourGuideController::class, 'getAvailability']);
+        Route::get('/guide/availability', [TourGuideController::class, 'getAvailability'])->middleware('cache.api:60'); // Cache for 1 minute
         Route::post('/guide/availability', [TourGuideController::class, 'setAvailability']);
         Route::put('/guide/availability/{availability}', [TourGuideController::class, 'updateAvailability']);
         Route::delete('/guide/availability/{availability}', [TourGuideController::class, 'deleteAvailability']);
@@ -122,6 +131,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/guide/active-bookings', [LocationController::class, 'getActiveBookings']);
         Route::post('/guide/bookings/{booking}/start-tracking', [LocationController::class, 'startTracking']);
         Route::post('/guide/bookings/{booking}/stop-tracking', [LocationController::class, 'stopTracking']);
+        
+        // Chat routes for guides
+        Route::get('/guide/chat/conversations', [ChatController::class, 'getConversations']);
+        Route::get('/guide/chat/messages', [ChatController::class, 'getMessages']);
+        Route::post('/guide/chat/messages', [ChatController::class, 'sendMessage']);
+        Route::put('/guide/chat/messages/{message}/read', [ChatController::class, 'markAsRead']);
+        Route::get('/guide/chat/unread-count', [ChatController::class, 'getUnreadCount']);
     });
 
     // Admin routes
@@ -166,6 +182,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payments/xendit/virtual-account', [PaymentController::class, 'createXenditVirtualAccount']);
     Route::get('/payments/{payment}', [PaymentController::class, 'show']);
     Route::post('/payments/{payment}/refund', [PaymentController::class, 'refund']);
+    
+    // GCash payment routes
+    Route::post('/gcash/initiate', [GCashPaymentController::class, 'initiatePayment']);
+    Route::post('/gcash/{paymentId}/upload-screenshot', [GCashPaymentController::class, 'uploadScreenshot']);
+    Route::get('/gcash/{paymentId}/status', [GCashPaymentController::class, 'getPaymentStatus']);
+    
+    // Admin GCash routes
+    Route::middleware('admin')->group(function () {
+        Route::post('/admin/gcash/{paymentId}/verify', [GCashPaymentController::class, 'verifyPayment']);
+        Route::get('/admin/gcash/pending-verifications', [GCashPaymentController::class, 'getPendingVerifications']);
+    });
 });
 
 // Payment webhooks

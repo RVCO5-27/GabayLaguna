@@ -30,6 +30,9 @@
   --color-info: #0284c7;
   --color-info-light: #0ea5e9;
   
+  /* Landing feature titles */
+  --feature-title-color: #3B82F6; /* bright blue for visibility */
+  
   /* Accent Colors */
   --color-accent: #8b5cf6;
   --color-accent-light: #a78bfa;
@@ -108,6 +111,9 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  
+  /* Feature titles in dark mode */
+  --feature-title-color: #60A5FA;
 }
 
 /* Base Styles */
@@ -294,13 +300,24 @@ a:hover {
 
 .btn-light {
   background: white;
-  color: var(--color-text);
+  color: #111827; /* ensure readable on white in all themes */
   box-shadow: var(--shadow-md);
 }
 
 .btn-light:hover {
   background: #f8fafc;
-  color: var(--color-text);
+  color: #111827;
+}
+
+/* Dark mode overrides for light buttons to keep text dark for contrast */
+.dark-mode .btn-light {
+  color: #111827;
+}
+
+/* Increased spacing between Features and Footer */
+#features {
+  padding-top: 3rem;
+  padding-bottom: 6rem; /* breathing room above footer */
 }
 
 /* Form Elements */

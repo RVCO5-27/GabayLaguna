@@ -1,33 +1,95 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ThemeToggle from "./ThemeToggle";
 import { Dropdown } from "react-bootstrap";
 import {
-  FaUser,
   FaSignOutAlt,
   FaUserCircle,
-  FaTachometerAlt,
-  FaClipboardList,
   FaHome,
 } from "react-icons/fa";
+import API_CONFIG from "../config/api";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
 
   const pathname = location.pathname;
-  const user = (() => {
-    try {
-      const userData = localStorage.getItem("user");
-      return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      console.error("Error parsing user data:", error);
-      return null;
-    }
-  })();
-  const isLoggedIn = !!user;
-  const role = user?.user_type || user?.role || null;
+
+  // Validate authentication on mount and when pathname changes
+  useEffect(() => {
+    const validateAuth = async () => {
+      try {
+        const userData = localStorage.getItem("user");
+        const token = localStorage.getItem("token");
+        
+        // Only consider logged in if both user data AND token exist
+        if (userData && token) {
+          try {
+            const parsedUser = JSON.parse(userData);
+            
+            // Optionally validate token with backend (non-blocking)
+            // This runs in the background and clears if invalid
+            fetch(`${API_CONFIG.BASE_URL}/api/user`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json',
+              },
+            }).then(response => {
+              if (!response.ok) {
+                // Token is invalid, clear auth
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                setUser(null);
+                setRole(null);
+                setIsLoggedIn(false);
+              }
+            }).catch(() => {
+              // Network error - don't clear, might be offline
+              // Keep user logged in for offline capability
+            });
+            
+            // Set user immediately (optimistic)
+            setUser(parsedUser);
+            setRole(parsedUser?.user_type || parsedUser?.role || null);
+            setIsLoggedIn(true);
+          } catch (parseError) {
+            console.error("Error parsing user data:", parseError);
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
+            setUser(null);
+            setRole(null);
+            setIsLoggedIn(false);
+          }
+        } else {
+          // Clear invalid data
+          if (userData && !token) {
+            localStorage.removeItem("user");
+          }
+          if (token && !userData) {
+            localStorage.removeItem("token");
+          }
+          setUser(null);
+          setRole(null);
+          setIsLoggedIn(false);
+        }
+      } catch (error) {
+        console.error("Error validating auth:", error);
+        // Clear corrupted data
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        setUser(null);
+        setRole(null);
+        setIsLoggedIn(false);
+      }
+    };
+
+    validateAuth();
+  }, [pathname]);
 
   const isPublicPage = [
     "/",
@@ -38,25 +100,14 @@ const Navbar = () => {
     "/signup/admin",
   ].some((path) => pathname === path || pathname.startsWith(path));
 
-  const dropdownLinks = {
-    tourist: {
-      profile: "/tourist-profile",
-      dashboard: "/tourist-dashboard",
-      bookings: "/my-bookings",
-    },
-    guide: {
-      profile: "/guide-profile",
-      dashboard: "/guide-dashboard",
-      bookings: "/guide-bookings",
-    },
-    admin: {
-      profile: "/admin-dashboard",
-      dashboard: "/admin-dashboard",
-    },
-  };
+  // Dropdown links removed as only Logout remains in the menu
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setUser(null);
+    setRole(null);
+    setIsLoggedIn(false);
     alert("You have been logged out.");
     navigate("/login");
   };
@@ -141,6 +192,7 @@ const Navbar = () => {
                       fontWeight: "600",
                       boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
                       transition: "all 0.3s ease",
+                      userSelect: "none",
                     }}
                     onMouseEnter={(e) => {
                       e.target.style.background = "rgba(255,255,255,1)";
@@ -154,7 +206,7 @@ const Navbar = () => {
                     }}
                   >
                     <FaUserCircle size={18} />
-                    <span className="d-none d-sm-inline">
+                    <span className="d-none d-sm-inline" style={{ userSelect: "none" }}>
                       {user?.name ||
                         user?.fullName ||
                         (role
@@ -169,131 +221,13 @@ const Navbar = () => {
                       marginTop: "8px",
                       minWidth: "220px",
                       zIndex: 1002,
-                      background: "rgba(255, 255, 255, 0.95)",
+                      background: "var(--color-bg-secondary)",
                       backdropFilter: "blur(10px)",
-                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      border: "1px solid var(--color-border)",
                       animation: "dropdownFadeIn 0.3s ease-out",
                     }}
                   >
-                    <Dropdown.Header
-                      className="fw-bold text-muted"
-                      style={{
-                        background: "transparent",
-                        borderBottom: "1px solid rgba(0,0,0,0.1)",
-                        padding: "12px 16px",
-                      }}
-                    >
-                      Welcome back!
-                    </Dropdown.Header>
-
-                    <Dropdown.Item
-                      as={Link}
-                      to={dropdownLinks[role]?.profile || "/profile"}
-                      className="d-flex align-items-center gap-2 py-3 px-3"
-                      style={{
-                        transition: "all 0.2s ease",
-                        border: "none",
-                        background: "transparent",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.background = "rgba(102, 126, 234, 0.1)";
-                        e.target.style.transform = "translateX(4px)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.background = "transparent";
-                        e.target.style.transform = "translateX(0)";
-                      }}
-                    >
-                      <FaUser size={14} style={{ color: "#667eea" }} />
-                      <span style={{ fontWeight: "500" }}>Profile</span>
-                    </Dropdown.Item>
-
-                    <Dropdown.Item
-                      as={Link}
-                      to={dropdownLinks[role]?.dashboard || "/dashboard"}
-                      className="d-flex align-items-center gap-2 py-3 px-3"
-                      style={{
-                        transition: "all 0.2s ease",
-                        border: "none",
-                        background: "transparent",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.background = "rgba(102, 126, 234, 0.1)";
-                        e.target.style.transform = "translateX(4px)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.background = "transparent";
-                        e.target.style.transform = "translateX(0)";
-                      }}
-                    >
-                      <FaTachometerAlt size={14} style={{ color: "#667eea" }} />
-                      <span style={{ fontWeight: "500" }}>Dashboard</span>
-                    </Dropdown.Item>
-
-                    {role === "tourist" && (
-                      <Dropdown.Item
-                        as={Link}
-                        to={dropdownLinks[role]?.bookings || "/my-bookings"}
-                        className="d-flex align-items-center gap-2 py-3 px-3"
-                        style={{
-                          transition: "all 0.2s ease",
-                          border: "none",
-                          background: "transparent",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.background =
-                            "rgba(102, 126, 234, 0.1)";
-                          e.target.style.transform = "translateX(4px)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.background = "transparent";
-                          e.target.style.transform = "translateX(0)";
-                        }}
-                      >
-                        <FaClipboardList
-                          size={14}
-                          style={{ color: "#667eea" }}
-                        />
-                        <span style={{ fontWeight: "500" }}>My Bookings</span>
-                      </Dropdown.Item>
-                    )}
-
-                    {role === "guide" && (
-                      <Dropdown.Item
-                        as={Link}
-                        to={dropdownLinks[role]?.bookings || "/guide-bookings"}
-                        className="d-flex align-items-center gap-2 py-3 px-3"
-                        style={{
-                          transition: "all 0.2s ease",
-                          border: "none",
-                          background: "transparent",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.background =
-                            "rgba(102, 126, 234, 0.1)";
-                          e.target.style.transform = "translateX(4px)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.background = "transparent";
-                          e.target.style.transform = "translateX(0)";
-                        }}
-                      >
-                        <FaClipboardList
-                          size={14}
-                          style={{ color: "#667eea" }}
-                        />
-                        <span style={{ fontWeight: "500" }}>
-                          Manage Bookings
-                        </span>
-                      </Dropdown.Item>
-                    )}
-
-                    <Dropdown.Divider
-                      style={{
-                        margin: "8px 0",
-                        borderColor: "rgba(0,0,0,0.1)",
-                      }}
-                    />
+                    {/* Only keep Logout in the menu */}
 
                     <Dropdown.Item
                       onClick={handleLogout}
@@ -302,15 +236,17 @@ const Navbar = () => {
                         transition: "all 0.2s ease",
                         border: "none",
                         background: "transparent",
-                        color: "#ef4444",
+                        color: "var(--color-danger)",
                       }}
                       onMouseEnter={(e) => {
                         e.target.style.background = "rgba(239, 68, 68, 0.1)";
                         e.target.style.transform = "translateX(4px)";
+                        e.target.style.color = "var(--color-danger)";
                       }}
                       onMouseLeave={(e) => {
                         e.target.style.background = "transparent";
                         e.target.style.transform = "translateX(0)";
+                        e.target.style.color = "var(--color-danger)";
                       }}
                     >
                       <FaSignOutAlt size={14} />
@@ -326,42 +262,99 @@ const Navbar = () => {
               <div className="d-flex gap-2">
                 <Link
                   to="/login"
-                  className="btn btn-outline-light px-3 py-2"
+                  className="btn btn-outline-light px-3 py-2 d-flex align-items-center gap-2"
                   style={{
                     borderRadius: "25px",
                     borderWidth: "2px",
+                    borderColor: "rgba(255, 255, 255, 0.4)",
                     fontWeight: "600",
-                    transition: "all 0.3s ease",
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    color: "white",
+                    position: "relative",
+                    overflow: "hidden",
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.background = "rgba(255,255,255,0.1)";
-                    e.target.style.transform = "translateY(-1px)";
+                    e.currentTarget.style.background = "rgba(255,255,255,0.15)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.7)";
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(255, 255, 255, 0.2)";
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.background = "transparent";
-                    e.target.style.transform = "translateY(0)";
+                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.4)";
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                  onMouseDown={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.background = "rgba(255,255,255,0.25)";
+                  }}
+                  onMouseUp={(e) => {
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.background = "rgba(255,255,255,0.15)";
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.background = "rgba(255,255,255,0.15)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.8)";
+                    e.currentTarget.style.outline = "2px solid rgba(255, 255, 255, 0.5)";
+                    e.currentTarget.style.outlineOffset = "2px";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.4)";
+                    e.currentTarget.style.outline = "none";
                   }}
                 >
-                  🔑 Login
+                  <span style={{ fontSize: "16px", transition: "transform 0.3s ease" }}>🔑</span>
+                  <span>Login</span>
                 </Link>
                 <Link
                   to="/signup/tourist"
-                  className="btn btn-light px-3 py-2 fw-semibold"
+                  className="btn btn-light px-3 py-2 d-flex align-items-center gap-2"
                   style={{
                     borderRadius: "25px",
-                    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-                    transition: "all 0.3s ease",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    fontWeight: "600",
+                    background: "white",
+                    color: "#4f46e5",
+                    border: "none",
+                    position: "relative",
+                    overflow: "hidden",
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.transform = "translateY(-1px)";
-                    e.target.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
+                    e.currentTarget.style.transform = "translateY(-2px) scale(1.02)";
+                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(79, 70, 229, 0.3)";
+                    e.currentTarget.style.background = "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)";
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "0 2px 10px rgba(0,0,0,0.1)";
+                    e.currentTarget.style.transform = "translateY(0) scale(1)";
+                    e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.15)";
+                    e.currentTarget.style.background = "white";
+                  }}
+                  onMouseDown={(e) => {
+                    e.currentTarget.style.transform = "translateY(0) scale(0.98)";
+                    e.currentTarget.style.boxShadow = "0 1px 5px rgba(0,0,0,0.2)";
+                  }}
+                  onMouseUp={(e) => {
+                    e.currentTarget.style.transform = "translateY(-2px) scale(1.02)";
+                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(79, 70, 229, 0.3)";
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.transform = "translateY(-2px) scale(1.02)";
+                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(79, 70, 229, 0.3)";
+                    e.currentTarget.style.outline = "2px solid rgba(79, 70, 229, 0.5)";
+                    e.currentTarget.style.outlineOffset = "2px";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.transform = "translateY(0) scale(1)";
+                    e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.15)";
+                    e.currentTarget.style.outline = "none";
                   }}
                 >
-                  📝 Sign Up
+                  <span style={{ fontSize: "16px", transition: "transform 0.3s ease" }}>📝</span>
+                  <span>Sign Up</span>
                 </Link>
               </div>
             )}
@@ -382,8 +375,8 @@ const Navbar = () => {
             )}
 
             {/* Mobile Theme Toggle */}
-            <div className="d-md-none d-flex gap-2">
-              <ThemeToggle />
+            <div className="d-md-none d-flex align-items-center">
+              <ThemeToggle size="sm" />
             </div>
           </div>
         </div>
@@ -404,14 +397,31 @@ const Navbar = () => {
 
         .dropdown-menu {
           z-index: 1002 !important;
+          background: var(--color-bg-secondary) !important;
+          border: 1px solid var(--color-border) !important;
+        }
+
+        .dropdown-item {
+          color: var(--color-text) !important;
+          background: transparent !important;
         }
 
         .dropdown-item:hover {
           background-color: rgba(102, 126, 234, 0.1) !important;
+          color: var(--color-text) !important;
         }
 
         .dropdown-item:active {
           background-color: rgba(102, 126, 234, 0.2) !important;
+          color: var(--color-text) !important;
+        }
+
+        .dropdown-item span {
+          color: inherit !important;
+        }
+
+        .dropdown-header {
+          color: var(--color-text-muted) !important;
         }
       `}</style>
     </nav>
