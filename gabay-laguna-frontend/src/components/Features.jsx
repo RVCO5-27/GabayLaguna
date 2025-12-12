@@ -48,15 +48,33 @@ const features = [
 
 const Features = () => (
   <section className="py-5" id="features" style={{
-    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'
+    background: 'linear-gradient(135deg, #F7F9FF 0%, #F3F6FF 100%)',
+    paddingTop: "80px",
+    paddingBottom: "80px"
   }}>
     <div className="container">
       {/* Header */}
       <div className="text-center mb-5">
-        <h2 className="display-5 fw-bold mb-3" style={{ color: '#2c3e50' }}>
+        <h2 
+          className="display-5 fw-bold mb-3" 
+          style={{ 
+            color: '#2C2C2C',
+            fontFamily: "'Poppins', sans-serif",
+            fontWeight: "700",
+            fontSize: "2.5rem"
+          }}
+        >
           Why Choose Gabay Laguna?
         </h2>
-        <p className="lead text-muted mx-auto" style={{ maxWidth: '600px' }}>
+        <p 
+          className="lead mx-auto" 
+          style={{ 
+            maxWidth: '700px',
+            color: '#6F6F6F',
+            fontSize: "1.15rem",
+            lineHeight: "1.7"
+          }}
+        >
           Experience the perfect blend of technology and local expertise for unforgettable adventures
         </p>
       </div>
@@ -66,40 +84,61 @@ const Features = () => (
         {features.map((feature, index) => (
           <div className="col-lg-4 col-md-6" key={index}>
             <div 
-              className="card h-100 border-0 shadow-lg"
+              className="card h-100 border-0"
               style={{ 
-                borderRadius: '20px',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer'
+                borderRadius: '24px',
+                background: '#FFFFFF',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                cursor: 'pointer',
+                overflow: 'hidden',
+                position: 'relative'
               }}
               onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-8px)';
-                e.target.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+                e.target.style.transform = 'translateY(-12px) scale(1.02)';
+                e.target.style.boxShadow = '0 20px 50px rgba(0,0,0,0.15)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+                e.target.style.transform = 'translateY(0) scale(1)';
+                e.target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.08)';
               }}
             >
-              <div className="card-body p-4 p-md-5 text-center">
+              <div className="card-body p-4 p-md-5 text-center" style={{ padding: '40px 30px' }}>
                 {/* Icon Container */}
                 <div 
                   className="d-inline-flex align-items-center justify-content-center rounded-circle mb-4"
                   style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '90px',
+                    height: '90px',
                     backgroundColor: feature.bgColor,
-                    color: feature.color
+                    color: feature.color,
+                    boxShadow: `0 8px 20px ${feature.bgColor}`,
+                    transition: 'all 0.3s ease'
                   }}
                 >
                   {feature.icon}
                 </div>
 
                 {/* Content */}
-                <h5 className="card-title fw-bold mb-3" style={{ color: '#2c3e50' }}>
+                <h5 
+                  className="card-title fw-bold mb-3" 
+                  style={{ 
+                    color: '#2C2C2C',
+                    fontFamily: "'Poppins', sans-serif",
+                    fontSize: "1.4rem",
+                    fontWeight: "700"
+                  }}
+                >
                   {feature.title}
                 </h5>
-                <p className="card-text text-muted lh-base">
+                <p 
+                  className="card-text lh-base" 
+                  style={{ 
+                    color: '#6F6F6F',
+                    fontSize: "1rem",
+                    lineHeight: "1.7"
+                  }}
+                >
                   {feature.desc}
                 </p>
               </div>
@@ -110,34 +149,78 @@ const Features = () => (
 
       {/* Call to Action */}
       <div className="text-center mt-5 pt-4">
-        <div className="bg-white rounded-4 p-4 p-md-5 shadow-lg d-inline-block">
-          <h4 className="fw-bold mb-3" style={{ color: '#667eea' }}>
+        <div 
+          className="rounded-4 p-4 p-md-5 d-inline-block"
+          style={{
+            borderRadius: "28px",
+            background: "transparent",
+          }}
+        >
+          <h4 
+            className="fw-bold mb-3" 
+            style={{ 
+              color: '#5B3FE3',
+              fontFamily: "'Poppins', sans-serif",
+              fontSize: "1.8rem",
+              fontWeight: "700"
+            }}
+          >
             Ready to Start Your Adventure?
           </h4>
-          <p className="text-muted mb-4">
+          <p 
+            className="mb-4" 
+            style={{ 
+              color: '#6F6F6F',
+              fontSize: "1.05rem"
+            }}
+          >
             Join thousands of tourists who have already discovered the magic of Laguna
           </p>
           <div className="d-flex flex-wrap justify-content-center gap-3">
             <a 
               href="/signup/tourist" 
-              className="btn btn-primary btn-lg px-4 py-3 fw-semibold"
+              className="btn btn-lg px-5 py-3 fw-semibold"
               style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg, #5B3FE3 0%, #7A63F6 100%)',
+                color: '#FFFFFF',
                 border: 'none',
                 borderRadius: '50px',
-                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
+                boxShadow: '0 8px 25px rgba(91, 63, 227, 0.35)',
+                fontFamily: "'Poppins', sans-serif",
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-3px)';
+                e.target.style.boxShadow = '0 12px 35px rgba(91, 63, 227, 0.45)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 8px 25px rgba(91, 63, 227, 0.35)';
               }}
             >
               🧳 Start Exploring
             </a>
             <a 
               href="/signup/guide" 
-              className="btn btn-outline-primary btn-lg px-4 py-3 fw-semibold"
+              className="btn btn-lg px-5 py-3 fw-semibold"
               style={{
+                background: 'transparent',
                 borderWidth: '2px',
                 borderRadius: '50px',
-                color: '#667eea',
-                borderColor: '#667eea'
+                color: '#FFD24D',
+                borderColor: '#FFD24D',
+                fontFamily: "'Poppins', sans-serif",
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = '#FFD24D';
+                e.target.style.color = '#2C2C2C';
+                e.target.style.transform = 'translateY(-3px)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'transparent';
+                e.target.style.color = '#FFD24D';
+                e.target.style.transform = 'translateY(0)';
               }}
             >
               🧭 Become a Guide

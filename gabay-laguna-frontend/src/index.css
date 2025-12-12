@@ -459,7 +459,7 @@ input:focus, select:focus, textarea:focus {
   transition: background var(--transition-normal);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-lg);
-  position: relative;
+  /* position will be set inline - do not override */
   z-index: 1000;
 }
 

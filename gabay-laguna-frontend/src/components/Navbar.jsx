@@ -61,43 +61,81 @@ const Navbar = () => {
     navigate("/login");
   };
 
+  // Use template design for landing page, gradient for other pages
+  const isLandingPage = pathname === "/";
+  
   return (
     <nav
-      className="navbar navbar-expand-lg navbar-dark px-4 py-3"
+      className={`navbar navbar-expand-lg px-4 ${isLandingPage ? "navbar-light" : "navbar-dark"}`}
       style={{
-        background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
-        boxShadow:
-          "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        background: isLandingPage 
+          ? "linear-gradient(135deg, #E8E4FF 0%, #F3F0FF 100%)" // Light purple gradient for header
+          : "linear-gradient(135deg, #5B3FE3 0%, #7A63F6 100%)",
+        boxShadow: isLandingPage
+          ? "0 2px 8px rgba(0,0,0,0.08)" // Template: Soft shadow
+          : "0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)",
         backdropFilter: "blur(10px)",
-        position: "relative",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        width: "100%",
         zIndex: 1000,
-        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+        borderBottom: isLandingPage
+          ? "1px solid rgba(91, 63, 227, 0.1)"
+          : "1px solid rgba(255, 255, 255, 0.15)",
+        paddingTop: "12px",
+        paddingBottom: "12px",
+        margin: 0,
       }}
     >
       <div className="container">
         {/* Brand */}
         <Link
-          className="navbar-brand d-flex align-items-center gap-3"
+          className="navbar-brand d-flex align-items-center"
           to="/"
-          style={{ textDecoration: "none" }}
+          style={{ textDecoration: "none", gap: "12px" }}
         >
-          <div className="position-relative">
+          <div 
+            className="rounded-circle d-flex align-items-center justify-content-center"
+            style={{
+              width: "50px",
+              height: "50px",
+              background: "linear-gradient(135deg, #5B3FE3 0%, #7A63F6 100%)",
+              border: "none",
+              boxShadow: "0 2px 8px rgba(91, 63, 227, 0.2)",
+            }}
+          >
             <img
               src="/assets/logo.png"
               alt="Gabay Laguna Logo"
-              className="rounded-circle shadow-sm"
               style={{
-                width: "45px",
-                height: "45px",
-                objectFit: "cover",
-                border: "2px solid rgba(255,255,255,0.2)",
+                width: "35px",
+                height: "35px",
+                objectFit: "contain",
               }}
             />
           </div>
           <div className="d-flex flex-column">
-            <span className="fw-bold fs-5 text-white">Gabay Laguna</span>
-            <small className="text-white-50" style={{ fontSize: "0.75rem" }}>
-              Explore • Discover • Experience
+            <span 
+              className="fw-bold" 
+              style={{ 
+                color: isLandingPage ? "#5B3FE3" : "#FFFFFF",
+                fontSize: "1.1rem",
+                lineHeight: "1.2"
+              }}
+            >
+              Gabay Laguna
+            </span>
+            <small 
+              style={{ 
+                fontSize: "0.7rem",
+                color: isLandingPage ? "#7A63F6" : "rgba(255,255,255,0.7)",
+                fontWeight: "500",
+                lineHeight: "1.2"
+              }}
+            >
+              Explore • Discover
             </small>
           </div>
         </Link>
@@ -111,19 +149,25 @@ const Navbar = () => {
           aria-controls="navbarNav"
           aria-expanded="false"
           aria-label="Toggle navigation"
-          style={{ border: "none", boxShadow: "none" }}
+          style={{ 
+            border: "none", 
+            boxShadow: "none",
+            color: isLandingPage ? "#5B3FE3" : "#FFFFFF"
+          }}
         >
-          <span className="navbar-toggler-icon"></span>
+          <span 
+            className="navbar-toggler-icon"
+            style={{
+              backgroundImage: isLandingPage 
+                ? `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2891, 63, 227, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e")`
+                : `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e")`
+            }}
+          ></span>
         </button>
 
         {/* Navigation Items */}
         <div className="collapse navbar-collapse" id="navbarNav">
           <div className="ms-auto d-flex gap-3 align-items-center">
-
-            {/* Enhanced Theme Toggle */}
-            <div className="d-none d-md-block">
-              <ThemeToggle />
-            </div>
 
             {/* Logged In User */}
             {isLoggedIn && (
@@ -323,45 +367,58 @@ const Navbar = () => {
 
             {/* Public Navigation */}
             {!isLoggedIn && isPublicPage && (
-              <div className="d-flex gap-2">
-                <Link
-                  to="/login"
-                  className="btn btn-outline-light px-3 py-2"
-                  style={{
-                    borderRadius: "25px",
-                    borderWidth: "2px",
-                    fontWeight: "600",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.background = "rgba(255,255,255,0.1)";
-                    e.target.style.transform = "translateY(-1px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.background = "transparent";
-                    e.target.style.transform = "translateY(0)";
-                  }}
-                >
-                  🔑 Login
-                </Link>
+              <div className="d-flex gap-3 align-items-center" style={{ gap: "12px" }}>
+                {/* Theme Toggle - Yellow Sun Icon */}
+                <div className="d-none d-md-block">
+                  <ThemeToggle />
+                </div>
+                
+                {/* Sign Up Text Link */}
                 <Link
                   to="/signup/tourist"
-                  className="btn btn-light px-3 py-2 fw-semibold"
+                  className="text-decoration-none fw-semibold"
                   style={{
-                    borderRadius: "25px",
-                    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+                    color: isLandingPage ? "#5B3FE3" : "#FFFFFF",
+                    fontSize: "0.95rem",
                     transition: "all 0.3s ease",
                   }}
                   onMouseEnter={(e) => {
+                    e.target.style.color = isLandingPage ? "#7A63F6" : "#F1F1FF";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.color = isLandingPage ? "#5B3FE3" : "#FFFFFF";
+                  }}
+                >
+                  Sign Up
+                </Link>
+                
+                {/* Sign Up Button */}
+                <Link
+                  to="/signup/tourist"
+                  className="btn px-3 py-2 fw-semibold"
+                  style={{
+                    borderRadius: "25px",
+                    background: isLandingPage ? "#FFFFFF" : "#FFFFFF",
+                    color: isLandingPage ? "#5B3FE3" : "#5B3FE3",
+                    border: "none",
+                    boxShadow: isLandingPage ? "0 2px 8px rgba(0,0,0,0.1)" : "0 2px 10px rgba(0,0,0,0.1)",
+                    transition: "all 0.3s ease",
+                    fontSize: "0.9rem",
+                  }}
+                  onMouseEnter={(e) => {
                     e.target.style.transform = "translateY(-1px)";
-                    e.target.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
+                    e.target.style.boxShadow = isLandingPage 
+                      ? "0 4px 12px rgba(0,0,0,0.15)" 
+                      : "0 4px 15px rgba(0,0,0,0.2)";
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "0 2px 10px rgba(0,0,0,0.1)";
+                    e.target.style.boxShadow = isLandingPage 
+                      ? "0 2px 8px rgba(0,0,0,0.1)" 
+                      : "0 2px 10px rgba(0,0,0,0.1)";
                   }}
                 >
-                  📝 Sign Up
+                  Sign Up
                 </Link>
               </div>
             )}

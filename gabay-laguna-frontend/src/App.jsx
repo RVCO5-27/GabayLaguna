@@ -52,7 +52,13 @@ const App = () => {
     <ThemeProvider>
       <div className="app-wrapper">
         <Navbar />
-        <div className="container-fluid px-3 mt-3">
+        <div 
+          className="container-fluid px-3"
+          style={{
+            margin: "1rem 0",
+            paddingTop: isHomePage ? "0" : "80px" // Add padding to account for fixed navbar (except for home page)
+          }}
+        >
           <div className="row g-3">
             {!isPublic && !isHomePage && (
               <div className="col-md-2 d-none d-md-block">

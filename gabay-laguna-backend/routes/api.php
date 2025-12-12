@@ -34,6 +34,20 @@ Route::get('/health', function () {
     ]);
 });
 
+// Public statistics endpoint
+Route::get('/statistics', function () {
+    $verifiedGuides = \App\Models\TourGuide::where('is_verified', true)
+        ->where('is_available', true)
+        ->count();
+    
+    $activePOIs = \App\Models\PointOfInterest::where('is_active', true)->count();
+    
+    return response()->json([
+        'verified_guides' => $verifiedGuides,
+        'active_destinations' => $activePOIs,
+    ]);
+});
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/guide/register', [AuthController::class, 'registerGuide']);
